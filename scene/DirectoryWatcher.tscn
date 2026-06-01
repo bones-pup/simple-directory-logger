@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://dh6r6l8blkjwp"]
+
+[ext_resource type="Script" uid="uid://bwtxovjt1ow1n" path="res://scene/DirectoryWatcher.gd" id="1_ifhme"]
+
+[node name="DirectoryWatcher" type="Node" unique_id=602047575]
+script = ExtResource("1_ifhme")

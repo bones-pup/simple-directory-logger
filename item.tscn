@@ -1,0 +1,43 @@
+[gd_scene format=3 uid="uid://7lwino4j4r6u"]
+
+[ext_resource type="Script" uid="uid://b0wrpatsqe7yw" path="res://item.gd" id="1_tnite"]
+
+[node name="item" type="HBoxContainer" unique_id=1384632504]
+offset_right = 40.0
+offset_bottom = 40.0
+theme_override_constants/separation = 17
+script = ExtResource("1_tnite")
+
+[node name="go" type="Button" parent="." unique_id=1893497080]
+layout_mode = 2
+text = "GO"
+
+[node name="date" type="Label" parent="." unique_id=1702297620]
+layout_mode = 2
+text = "date"
+
+[node name="sepa" type="Label" parent="." unique_id=1114564987]
+layout_mode = 2
+text = "|"
+
+[node name="jenis" type="Label" parent="." unique_id=908684691]
+layout_mode = 2
+text = "new"
+
+[node name="sepa2" type="Label" parent="." unique_id=323418225]
+layout_mode = 2
+text = "|"
+
+[node name="nama" type="Label" parent="." unique_id=714109553]
+layout_mode = 2
+text = "nama"
+
+[node name="sepa3" type="Label" parent="." unique_id=1216620178]
+layout_mode = 2
+text = "|"
+
+[node name="path" type="Label" parent="." unique_id=1216327128]
+layout_mode = 2
+text = "path"
+
+[connection signal="pressed" from="go" to="." method="_on_go_pressed"]
