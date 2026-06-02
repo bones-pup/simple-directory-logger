@@ -16,7 +16,7 @@ enum MentionType {
 }
 
 @export var scan_delay: float = 0
-@export var scan_step := 300
+@export var scan_step := 250
 @export var discord_webhook_url: String = ""
 @export var recursive: bool = true
 @export var mention_type: MentionType = MentionType.NONE

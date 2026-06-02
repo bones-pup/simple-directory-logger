@@ -206,9 +206,9 @@ func _on_directory_watcher_files_created(files: PackedStringArray) -> void:
 		i.path_label.text = file
 		i.jenis.add_theme_color_override("font_color", Color.GREEN)
 		i.finish_init_data = true
-		await get_tree().process_frame
-		var scrollbar = main_container_scroll_container.get_v_scroll_bar()
-		main_container_scroll_container.scroll_vertical = scrollbar.max_value
+	await get_tree().process_frame
+	var scrollbar = main_container_scroll_container.get_v_scroll_bar()
+	main_container_scroll_container.scroll_vertical = scrollbar.max_value
 
 
 func _on_directory_watcher_files_deleted(files: PackedStringArray) -> void:
@@ -223,9 +223,9 @@ func _on_directory_watcher_files_deleted(files: PackedStringArray) -> void:
 		i.path_label.text = file
 		i.jenis.add_theme_color_override("font_color", Color.RED)
 		i.finish_init_data = true
-		await get_tree().process_frame
-		var scrollbar = main_container_scroll_container.get_v_scroll_bar()
-		main_container_scroll_container.scroll_vertical = scrollbar.max_value
+	await get_tree().process_frame
+	var scrollbar = main_container_scroll_container.get_v_scroll_bar()
+	main_container_scroll_container.scroll_vertical = scrollbar.max_value
 
 
 func _on_directory_watcher_files_modified(files: PackedStringArray) -> void:
@@ -239,9 +239,9 @@ func _on_directory_watcher_files_modified(files: PackedStringArray) -> void:
 		i.path_label.text = file
 		i.jenis.add_theme_color_override("font_color", Color.ORANGE)
 		i.finish_init_data = true
-		await get_tree().process_frame
-		var scrollbar = main_container_scroll_container.get_v_scroll_bar()
-		main_container_scroll_container.scroll_vertical = scrollbar.max_value
+	await get_tree().process_frame
+	var scrollbar = main_container_scroll_container.get_v_scroll_bar()
+	main_container_scroll_container.scroll_vertical = scrollbar.max_value
 
 
 # ─────────────────────────────────────────────

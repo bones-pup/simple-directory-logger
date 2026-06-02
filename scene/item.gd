@@ -8,6 +8,8 @@ extends HBoxContainer
 @onready var lifetime: Label = $lifetime
 
 var finish_init_data:bool = false
+var flash_color: Color = Color(1.0, 0.85, 0.0, 0.5)
+var alpha_fade:float = 1.0
 
 const LOG_PATH = "user://watcher.log"
 const MAX_LOG_SIZE = 5 * 1024 * 1024  # 5MB per file
@@ -25,6 +27,18 @@ func _ready() -> void:
 	#tw.tween_property(self,"modulate:a",1.0,0.5)
 	tw.tween_property(self,"scale",Vector2(1.1,1.0),0.2)
 	tw.tween_property(self,"scale",Vector2(1.0,1.0),0.2)
+	
+	
+		# Memastikan background menggambar ulang setiap kali ukuran HBox berubah
+	item_rect_changed.connect(queue_redraw)
+	
+	# Membuat animasi fadeout menggunakan Tween langsung dari _ready
+	var tween = create_tween()
+	# Menganimasikan properti 'a' (alpha/transparansi) pada flash_color menjadi 0 (hilang) selama 1.0 detik
+	tween.tween_property(self, "alpha_fade", 0.0, 2.0).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	
+	# Menghubungkan proses animasi ke fungsi menggambar ulang
+	tween.tween_callback(queue_redraw) # Memastikan redraw terakhir bersih
 	
 
 func go(target_path:String):
@@ -52,6 +66,11 @@ func _process(_delta: float) -> void:
 	if finish_init_data:
 		_append_to_log(jenis.text,nama.text,path_label.text)
 		finish_init_data = false #agar tidak loop
+	
+	
+	if alpha_fade > 0.0:
+		queue_redraw()
+
 
 func _on_lifetime_timeout_timeout() -> void:
 	queue_free()
@@ -101,3 +120,24 @@ func _append_to_log(type: String, name: String, path: String) -> void:
 	
 	file.store_string(line)
 	file.close()
+	
+func _draw() -> void:
+	if alpha_fade > 0.0:
+		# Poin sudut kotak: [Kiri-Atas, Kanan-Atas, Kanan-Bawah, Kiri-Bawah]
+		var points = PackedVector2Array([
+			Vector2(0, 0),
+			Vector2(size.x, 0),
+			Vector2(size.x, size.y),
+			Vector2(0, size.y)
+		])
+		
+		# CONTOH 1: Gradien Kuning ke Transparan (Kiri ke Kanan)
+		var colors = PackedColorArray([
+			Color(1.0, 0.85, 0.0, alpha_fade),       # Kiri-Atas (Kuning)
+			Color(1.0, 0.85, 0.0, 0.0),              # Kanan-Atas (Transparan)
+			Color(1.0, 0.85, 0.0, 0.0),              # Kanan-Bawah (Transparan)
+			Color(1.0, 0.85, 0.0, alpha_fade)        # Kiri-Bawah (Kuning)
+		])
+		
+		# Menggambar kotak dengan warna berbeda di tiap sudut (Gradien)
+		draw_primitive(points, colors, PackedVector2Array())
