@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://7lwino4j4r6u"]
 
-[ext_resource type="Script" uid="uid://b0wrpatsqe7yw" path="res://item.gd" id="1_tnite"]
+[ext_resource type="Script" uid="uid://b0wrpatsqe7yw" path="res://scene/item.gd" id="1_tnite"]
 
 [node name="item" type="HBoxContainer" unique_id=1384632504]
 offset_right = 40.0

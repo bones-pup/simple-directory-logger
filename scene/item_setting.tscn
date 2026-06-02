@@ -1,0 +1,28 @@
+[gd_scene format=3 uid="uid://ch3jkxera3e1f"]
+
+[ext_resource type="Script" uid="uid://cxre7rokts38q" path="res://scene/item_setting.gd" id="1_3u21j"]
+
+[node name="item_setting" type="HBoxContainer" unique_id=1384632504]
+offset_right = 40.0
+offset_bottom = 40.0
+theme_override_constants/separation = 17
+script = ExtResource("1_3u21j")
+
+[node name="br" type="Label" parent="." unique_id=1745055581]
+layout_mode = 2
+text = ">"
+
+[node name="name_item" type="Label" parent="." unique_id=1216327128]
+layout_mode = 2
+text = "path"
+
+[node name="edit" type="Button" parent="." unique_id=1893497080]
+layout_mode = 2
+text = "edit"
+
+[node name="delete" type="Button" parent="." unique_id=169722351]
+layout_mode = 2
+text = "delete"
+
+[connection signal="pressed" from="edit" to="." method="_on_edit_pressed"]
+[connection signal="pressed" from="delete" to="." method="_on_delete_pressed"]

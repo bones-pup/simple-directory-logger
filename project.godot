@@ -19,6 +19,10 @@ config/icon="res://icon.svg"
 
 window/size/always_on_top=true
 
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/script-ide/plugin.cfg")
+
 [physics]
 
 3d/physics_engine="Jolt Physics"

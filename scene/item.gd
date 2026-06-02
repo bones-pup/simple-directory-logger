@@ -3,6 +3,7 @@ extends HBoxContainer
 @onready var jenis: Label = $jenis
 @onready var nama: Label = $nama
 @onready var path_label: Label = $path
+@onready var go_btn: Button = $go
 
 
 func _on_go_pressed() -> void:

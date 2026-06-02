@@ -139,7 +139,7 @@ func _build_discord_embed(event: String, files: PackedStringArray) -> Dictionary
 	match event:
 		"created":
 			color = 0x57F287
-			emoji = "📁 ➕"
+			emoji = "📁"
 		"modified":
 			color = 0xFEE75C
 			emoji = "📝"
