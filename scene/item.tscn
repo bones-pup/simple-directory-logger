@@ -8,15 +8,23 @@ offset_bottom = 40.0
 theme_override_constants/separation = 17
 script = ExtResource("1_tnite")
 
+[node name="sepa" type="Label" parent="." unique_id=1114564987]
+layout_mode = 2
+text = ">"
+
 [node name="go" type="Button" parent="." unique_id=1893497080]
 layout_mode = 2
 text = "GO"
+
+[node name="sepa2" type="Label" parent="." unique_id=323418225]
+layout_mode = 2
+text = "|"
 
 [node name="date" type="Label" parent="." unique_id=1702297620]
 layout_mode = 2
 text = "date"
 
-[node name="sepa" type="Label" parent="." unique_id=1114564987]
+[node name="sepa3" type="Label" parent="." unique_id=1216620178]
 layout_mode = 2
 text = "|"
 
@@ -24,7 +32,7 @@ text = "|"
 layout_mode = 2
 text = "new"
 
-[node name="sepa2" type="Label" parent="." unique_id=323418225]
+[node name="sepa4" type="Label" parent="." unique_id=1417106444]
 layout_mode = 2
 text = "|"
 
@@ -32,7 +40,15 @@ text = "|"
 layout_mode = 2
 text = "nama"
 
-[node name="sepa3" type="Label" parent="." unique_id=1216620178]
+[node name="sepa5" type="Label" parent="." unique_id=304882955]
+layout_mode = 2
+text = "|"
+
+[node name="lifetime" type="Label" parent="." unique_id=167040660]
+layout_mode = 2
+text = "lifetime"
+
+[node name="sepa6" type="Label" parent="." unique_id=1672822990]
 layout_mode = 2
 text = "|"
 
@@ -40,4 +56,9 @@ text = "|"
 layout_mode = 2
 text = "path"
 
+[node name="Lifetime_timeout" type="Timer" parent="." unique_id=494551981]
+wait_time = 600.0
+autostart = true
+
 [connection signal="pressed" from="go" to="." method="_on_go_pressed"]
+[connection signal="timeout" from="Lifetime_timeout" to="." method="_on_lifetime_timeout_timeout"]

@@ -64,23 +64,23 @@ label_settings = SubResource("LabelSettings_62e2m")
 [node name="help" type="Button" parent="VBoxContainer/Panel2/MarginContainer/HBoxContainer" unique_id=1069178348]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.3
-text = "help"
+size_flags_stretch_ratio = 0.5
+text = "help ❓"
 
 [node name="start" type="Button" parent="VBoxContainer/Panel2/MarginContainer/HBoxContainer" unique_id=1245344511]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "start"
+text = "start ▶️"
 
 [node name="stop" type="Button" parent="VBoxContainer/Panel2/MarginContainer/HBoxContainer" unique_id=1001047232]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "stop"
+text = "stop 🛑"
 
 [node name="restart" type="Button" parent="VBoxContainer/Panel2/MarginContainer/HBoxContainer" unique_id=974152532]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "restart"
+text = "restart 🔁"
 
 [node name="MarginContainer3" type="MarginContainer" parent="VBoxContainer" unique_id=657775523]
 layout_mode = 2
@@ -269,6 +269,19 @@ layout_mode = 2
 [node name="item_setting6" parent="VBoxContainer/MarginContainer3/HBoxContainer/setup_list/ScrollContainer/setup_list_VBoxContainer" unique_id=1984671157 instance=ExtResource("3_8g54p")]
 layout_mode = 2
 
+[node name="scanlog_HBoxContainer" type="HBoxContainer" parent="VBoxContainer" unique_id=1938525463]
+visible = false
+layout_mode = 2
+
+[node name="label" type="Label" parent="VBoxContainer/scanlog_HBoxContainer" unique_id=161863221]
+layout_mode = 2
+text = " > scanning..."
+
+[node name="scaning_log" type="LineEdit" parent="VBoxContainer/scanlog_HBoxContainer" unique_id=1818535554]
+layout_mode = 2
+size_flags_horizontal = 3
+editable = false
+
 [node name="Panel" type="Panel" parent="VBoxContainer" unique_id=41411053]
 z_index = -1
 layout_mode = 2
@@ -305,6 +318,7 @@ layout_mode = 2
 [connection signal="files_deleted" from="DirectoryWatcher" to="." method="_on_directory_watcher_files_deleted"]
 [connection signal="files_modified" from="DirectoryWatcher" to="." method="_on_directory_watcher_files_modified"]
 [connection signal="scan_completed" from="DirectoryWatcher" to="." method="_on_directory_watcher_scan_completed"]
+[connection signal="scan_log" from="DirectoryWatcher" to="." method="_on_directory_watcher_scan_log"]
 [connection signal="pressed" from="VBoxContainer/Panel2/MarginContainer/HBoxContainer/help" to="." method="_on_help_pressed"]
 [connection signal="pressed" from="VBoxContainer/Panel2/MarginContainer/HBoxContainer/start" to="." method="_on_start_pressed"]
 [connection signal="pressed" from="VBoxContainer/Panel2/MarginContainer/HBoxContainer/stop" to="." method="_on_stop_pressed"]

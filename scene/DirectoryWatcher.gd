@@ -15,8 +15,8 @@ enum MentionType {
 	USER,
 }
 
-@export var scan_delay: float = 1
-@export var scan_step := 5000
+@export var scan_delay: float = 0
+@export var scan_step := 300
 @export var discord_webhook_url: String = ""
 @export var recursive: bool = true
 @export var mention_type: MentionType = MentionType.NONE
@@ -28,8 +28,8 @@ signal files_deleted(files: PackedStringArray)
 signal webhook_success(event: String, files: PackedStringArray)
 signal webhook_failed(event: String, files: PackedStringArray, error_code: int, error_message: String)
 signal scan_completed()
+signal scan_log(log:String)
 
-# ← NULL, bukan DirAccess.open(".")
 var _directory: DirAccess = null
 var _directory_list: Dictionary
 var _directory_cache: Array[String]
@@ -45,7 +45,6 @@ var _initial_scan_done := false
 func _ready() -> void:
 	_current_delay = scan_delay
 	_remaining_steps = scan_step
-	# ← hapus _directory.include_hidden, karena _directory sudah null
 
 func add_scan_directory(directory: String) -> void:
 	directory = ProjectSettings.globalize_path(directory)
@@ -55,10 +54,11 @@ func add_scan_directory(directory: String) -> void:
 func _add_directory_internal(directory: String) -> void:
 	if directory in _directory_list:
 		return
-	
-	var watched := WatchedDirectory.new()
-	
-	# Index semua file sekarang juga
+
+	_directory_list[directory] = WatchedDirectory.new()
+
+	if not recursive:
+		return
 	var dir := DirAccess.open(directory)
 	if dir == null:
 		push_error("DirectoryWatcher: failed to open: %s" % directory)
@@ -66,20 +66,6 @@ func _add_directory_internal(directory: String) -> void:
 	dir.include_hidden = true
 	dir.list_dir_begin()
 	var entry := dir.get_next()
-	while not entry.is_empty():
-		if not dir.current_is_dir():
-			var full_file := directory.path_join(entry)
-			if not _is_excluded(full_file):
-				watched.previous[entry] = FileAccess.get_modified_time(full_file)
-		entry = dir.get_next()
-	
-	_directory_list[directory] = watched
-	
-	# Recursive subdirs
-	if not recursive:
-		return
-	dir.list_dir_begin()
-	entry = dir.get_next()
 	while not entry.is_empty():
 		if dir.current_is_dir() and entry != "." and entry != "..":
 			var subdir := directory.path_join(entry)
@@ -243,61 +229,68 @@ func _on_webhook_completed(
 		webhook_failed.emit(event, files, response_code,
 			"Discord returned HTTP %d: %s" % [response_code, body.get_string_from_utf8()])
 
+var _scan_log_counter := 0
+const SCAN_LOG_INTERVAL := 20
+
 func _process(delta: float) -> void:
-	
 	if _directory_list.is_empty():
 		return
 
 	if _current_delay > 0:
 		_current_delay -= delta
 		return
+		
 
 	while _remaining_steps > 0:
 		if _current_directory_name.is_empty():
 			_current_directory_name = _directory_cache[_current_directory_index]
 			_directory = DirAccess.open(_current_directory_name)
 			if _directory == null:
-				push_error("failed to open: %s" % _current_directory_name)
+				push_error("DirectoryWatcher: failed to open during scan: %s" % _current_directory_name)
 				_current_directory_index += 1
 				_current_directory_name = ""
-				if _current_directory_index >= _directory_list.size():
+				if _current_directory_index >= _directory_cache.size():
 					_current_directory_index = 0
 					break
 				continue
 			_directory.include_hidden = true
 			_directory.list_dir_begin()
-			#print("list_dir_begin done, dir: ", _current_directory_name)
+			
+			_scan_log_counter += 1
+			if _scan_log_counter >= SCAN_LOG_INTERVAL:
+				_scan_log_counter = 0
+				scan_log.emit(_current_directory_name)
 
 		var directory: WatchedDirectory = _directory_list[_current_directory_name]
 		var file := _directory.get_next()
-		#print("get_next: '", file, "' is_dir: ", _directory.current_is_dir())
 
 		if file.is_empty():
-			var finished_dir := _current_directory_name  # ← simpan dulu
+			var finished_dir := _current_directory_name
 			_current_directory_index += 1
 			_current_directory_name = ""
 			_directory = null
 
-			# ← hapus semua blok if/else first_scan, langsung emit saja
-			
-			if not directory.new.is_empty():
-				files_created.emit(directory.new)
-				_send_discord_webhook("created", directory.new)
+			if _initial_scan_done:
+				if not directory.new.is_empty():
+					files_created.emit(directory.new)
+					_send_discord_webhook("created", directory.new)
+					directory.new.clear()
+
+				if not directory.modified.is_empty():
+					files_modified.emit(directory.modified)
+					_send_discord_webhook("modified", directory.modified)
+					directory.modified.clear()
+
+				var deleted: PackedStringArray
+				for path in directory.previous:
+					if not path in directory.current:
+						deleted.append(finished_dir.path_join(path))
+				if not deleted.is_empty():
+					files_deleted.emit(deleted)
+					_send_discord_webhook("deleted", deleted)
+			else:
 				directory.new.clear()
-
-			if not directory.modified.is_empty():
-				files_modified.emit(directory.modified)
-				_send_discord_webhook("modified", directory.modified)
 				directory.modified.clear()
-
-			var deleted: PackedStringArray
-			for path in directory.previous:
-				if not path in directory.current:
-					deleted.append(finished_dir.path_join(path))
-
-			if not deleted.is_empty():
-				files_deleted.emit(deleted)
-				_send_discord_webhook("deleted", deleted)
 
 			directory.previous = directory.current
 			directory.current = {}
@@ -311,13 +304,15 @@ func _process(delta: float) -> void:
 				_current_directory_index = 0
 				if not _initial_scan_done:
 					_initial_scan_done = true
-					scan_completed.emit()  # ← hanya emit sekali
+					await get_tree().process_frame
+					scan_completed.emit()
 				break
 		else:
 			if _directory.current_is_dir():
 				continue
 
 			var full_file := _current_directory_name.path_join(file)
+			
 
 			if _is_excluded(full_file):
 				continue

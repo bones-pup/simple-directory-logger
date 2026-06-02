@@ -11,6 +11,8 @@ var ITEM = preload("uid://7lwino4j4r6u")
 var scan_dir = ""
 @onready var scan_path_line_edit: LineEdit = $VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer/sc_dir/scan_path_LineEdit
 @onready var recursive: CheckBox = $VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer/recursive
+@onready var scaning_log: LineEdit = $VBoxContainer/scanlog_HBoxContainer/scaning_log
+@onready var scanlog_h_box_container: HBoxContainer = $VBoxContainer/scanlog_HBoxContainer
 
 
 var ITEM_SETTING = preload("uid://ch3jkxera3e1f")
@@ -42,6 +44,7 @@ const CONFIG_PATH = "user://user.cfg"
 func _ready() -> void:
 	load_config()
 	print(watcher.recursive)
+	
 	watcher.set_process(false)
 	_is_running = false
 	_update_button_states()
@@ -140,6 +143,7 @@ func _start_watcher() -> void:
 	_is_running = true
 	_update_button_states()
 	_log_status("Watcher started — scanning: %s" % scan_dir)
+	scanlog_h_box_container.show()
 
 
 func _stop_watcher() -> void:
@@ -181,6 +185,7 @@ func _log_status(msg: String) -> void:
 	i.path_label.text = ""
 	i.go_btn.hide()
 	i.jenis.add_theme_color_override("font_color", Color.GRAY)
+	i.finish_init_data = true
 	await get_tree().process_frame
 	var scrollbar = main_container_scroll_container.get_v_scroll_bar()
 	main_container_scroll_container.scroll_vertical = scrollbar.max_value
@@ -200,6 +205,7 @@ func _on_directory_watcher_files_created(files: PackedStringArray) -> void:
 		i.nama.text = file.get_file()
 		i.path_label.text = file
 		i.jenis.add_theme_color_override("font_color", Color.GREEN)
+		i.finish_init_data = true
 		await get_tree().process_frame
 		var scrollbar = main_container_scroll_container.get_v_scroll_bar()
 		main_container_scroll_container.scroll_vertical = scrollbar.max_value
@@ -216,6 +222,7 @@ func _on_directory_watcher_files_deleted(files: PackedStringArray) -> void:
 		i.nama.text = file.get_file()
 		i.path_label.text = file
 		i.jenis.add_theme_color_override("font_color", Color.RED)
+		i.finish_init_data = true
 		await get_tree().process_frame
 		var scrollbar = main_container_scroll_container.get_v_scroll_bar()
 		main_container_scroll_container.scroll_vertical = scrollbar.max_value
@@ -231,6 +238,7 @@ func _on_directory_watcher_files_modified(files: PackedStringArray) -> void:
 		i.nama.text = file.get_file()
 		i.path_label.text = file
 		i.jenis.add_theme_color_override("font_color", Color.ORANGE)
+		i.finish_init_data = true
 		await get_tree().process_frame
 		var scrollbar = main_container_scroll_container.get_v_scroll_bar()
 		main_container_scroll_container.scroll_vertical = scrollbar.max_value
@@ -450,5 +458,11 @@ func _on_recursive_pressed() -> void:
 
 
 func _on_directory_watcher_scan_completed() -> void:
-	watcher.scan_completed.connect(func(): _log_status("Initial scan done, watching for changes..."))
+	_log_status("scanning: done")
+	scanlog_h_box_container.hide()
+	pass # Replace with function body.
+
+
+func _on_directory_watcher_scan_log(log_scan: String) -> void:
+	scaning_log.text = log_scan
 	pass # Replace with function body.
