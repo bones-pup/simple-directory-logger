@@ -15,13 +15,9 @@ run/main_scene="uid://7tv25hxnvkv"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 config/icon="res://icon.svg"
 
-[display]
-
-window/size/always_on_top=true
-
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/script-ide/plugin.cfg")
+enabled=PackedStringArray()
 
 [physics]
 

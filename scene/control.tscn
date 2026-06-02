@@ -73,13 +73,11 @@ size_flags_horizontal = 3
 text = "start"
 
 [node name="stop" type="Button" parent="VBoxContainer/Panel2/MarginContainer/HBoxContainer" unique_id=1001047232]
-visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 text = "stop"
 
 [node name="restart" type="Button" parent="VBoxContainer/Panel2/MarginContainer/HBoxContainer" unique_id=974152532]
-visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 text = "restart"
@@ -119,6 +117,10 @@ expand_to_text_length = true
 
 [node name="scan_Button" type="Button" parent="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer/sc_dir" unique_id=1743704014]
 layout_mode = 2
+text = "select folder"
+
+[node name="set_scan_Button" type="Button" parent="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer/sc_dir" unique_id=1257863521]
+layout_mode = 2
 text = "set"
 
 [node name="recursive" type="CheckBox" parent="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer" unique_id=785225039]
@@ -155,9 +157,9 @@ layout_mode = 2
 text = "webhook url : "
 
 [node name="dc_webhook_LineEdit" type="LineEdit" parent="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer/dc_webhook" unique_id=2093757658]
+custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
-placeholder_text = "https:"
-expand_to_text_length = true
+placeholder_text = "https://discord.com/api/webhooks/15072....."
 
 [node name="dc_webhook_Button" type="Button" parent="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer/dc_webhook" unique_id=1327243685]
 layout_mode = 2
@@ -172,16 +174,17 @@ text = "discord mention type : "
 
 [node name="dc_mention_OptionButton" type="OptionButton" parent="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer/dc_mention" unique_id=74493959]
 layout_mode = 2
+selected = 0
 item_count = 5
-popup/item_0/text = "everyone"
-popup/item_0/id = 1
+popup/item_0/text = "none"
+popup/item_0/id = 0
 popup/item_1/text = "here"
-popup/item_1/id = 0
-popup/item_2/text = "role"
+popup/item_1/id = 1
+popup/item_2/text = "everyone"
 popup/item_2/id = 2
-popup/item_3/text = "user"
+popup/item_3/text = "role"
 popup/item_3/id = 3
-popup/item_4/text = "none"
+popup/item_4/text = "user"
 popup/item_4/id = 4
 
 [node name="dc_mention_Button" type="Button" parent="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer/dc_mention" unique_id=957589943]
@@ -189,6 +192,7 @@ layout_mode = 2
 text = "set"
 
 [node name="dc_mention_id" type="HBoxContainer" parent="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer" unique_id=237024062]
+visible = false
 layout_mode = 2
 
 [node name="label" type="Label" parent="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer/dc_mention_id" unique_id=1247344390]
@@ -197,7 +201,7 @@ text = "mention id : "
 
 [node name="dc_mention_id_LineEdit" type="LineEdit" parent="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer/dc_mention_id" unique_id=1492890080]
 layout_mode = 2
-text = "asdasfafasfasfasfa"
+placeholder_text = "wai98734huhad"
 expand_to_text_length = true
 
 [node name="dc_mention_id_Button" type="Button" parent="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer/dc_mention_id" unique_id=1027455875]
@@ -295,31 +299,24 @@ alignment = 2
 [node name="item" parent="VBoxContainer/Panel/MarginContainer2/ScrollContainer/main_container" unique_id=1234899421 instance=ExtResource("3_qtu10")]
 layout_mode = 2
 
-[node name="item2" parent="VBoxContainer/Panel/MarginContainer2/ScrollContainer/main_container" unique_id=1609265705 instance=ExtResource("3_qtu10")]
-layout_mode = 2
-
-[node name="item3" parent="VBoxContainer/Panel/MarginContainer2/ScrollContainer/main_container" unique_id=1289180708 instance=ExtResource("3_qtu10")]
-layout_mode = 2
-
-[node name="item4" parent="VBoxContainer/Panel/MarginContainer2/ScrollContainer/main_container" unique_id=1454621459 instance=ExtResource("3_qtu10")]
-layout_mode = 2
-
-[node name="item5" parent="VBoxContainer/Panel/MarginContainer2/ScrollContainer/main_container" unique_id=1969343982 instance=ExtResource("3_qtu10")]
-layout_mode = 2
-
 [node name="FileDialog" type="FileDialog" parent="." unique_id=942022209]
 
 [connection signal="files_created" from="DirectoryWatcher" to="." method="_on_directory_watcher_files_created"]
 [connection signal="files_deleted" from="DirectoryWatcher" to="." method="_on_directory_watcher_files_deleted"]
 [connection signal="files_modified" from="DirectoryWatcher" to="." method="_on_directory_watcher_files_modified"]
+[connection signal="scan_completed" from="DirectoryWatcher" to="." method="_on_directory_watcher_scan_completed"]
 [connection signal="pressed" from="VBoxContainer/Panel2/MarginContainer/HBoxContainer/help" to="." method="_on_help_pressed"]
 [connection signal="pressed" from="VBoxContainer/Panel2/MarginContainer/HBoxContainer/start" to="." method="_on_start_pressed"]
 [connection signal="pressed" from="VBoxContainer/Panel2/MarginContainer/HBoxContainer/stop" to="." method="_on_stop_pressed"]
 [connection signal="pressed" from="VBoxContainer/Panel2/MarginContainer/HBoxContainer/restart" to="." method="_on_restart_pressed"]
 [connection signal="pressed" from="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer/sc_dir/scan_Button" to="." method="_on_scan_button_pressed"]
-[connection signal="toggled" from="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer/recursive" to="." method="_on_recursive_toggled"]
+[connection signal="pressed" from="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer/sc_dir/set_scan_Button" to="." method="_on_set_scan_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer/recursive" to="." method="_on_recursive_pressed"]
 [connection signal="pressed" from="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer/e_fol/e_fol_Button" to="." method="_on_e_fol_button_pressed"]
 [connection signal="pressed" from="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer/e_ex/e_ex_Button" to="." method="_on_e_ex_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer/dc_webhook/dc_webhook_Button" to="." method="_on_dc_webhook_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer/dc_mention/dc_mention_Button" to="." method="_on_dc_mention_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer/dc_mention_id/dc_mention_id_Button" to="." method="_on_dc_mention_id_button_pressed"]
 [connection signal="pressed" from="VBoxContainer/MarginContainer3/HBoxContainer/setup_list/setup_list_selectfolder_Button" to="." method="_on_setup_list_selectfolder_button_pressed"]
 [connection signal="pressed" from="VBoxContainer/MarginContainer3/HBoxContainer/setup_list/HBoxContainer/setup_list_add" to="." method="_on_setup_list_add_pressed"]
 [connection signal="pressed" from="VBoxContainer/MarginContainer3/HBoxContainer/setup_list/HBoxContainer/setup_list_save" to="." method="_on_setup_list_save_pressed"]
