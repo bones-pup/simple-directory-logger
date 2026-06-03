@@ -22,6 +22,10 @@ enum MentionType {
 @export var mention_type: MentionType = MentionType.NONE
 @export var mention_id: String = ""
 
+@export var push_created: bool = true
+@export var push_deleted: bool = true
+@export var push_modified: bool = true
+
 signal files_created(files: PackedStringArray)
 signal files_modified(files: PackedStringArray)
 signal files_deleted(files: PackedStringArray)
@@ -273,12 +277,14 @@ func _process(delta: float) -> void:
 			if _initial_scan_done:
 				if not directory.new.is_empty():
 					files_created.emit(directory.new)
-					_send_discord_webhook("created", directory.new)
+					if push_created:
+						_send_discord_webhook("created", directory.new)
 					directory.new.clear()
 
 				if not directory.modified.is_empty():
 					files_modified.emit(directory.modified)
-					_send_discord_webhook("modified", directory.modified)
+					if push_modified:
+						_send_discord_webhook("modified", directory.modified)
 					directory.modified.clear()
 
 				var deleted: PackedStringArray
@@ -287,7 +293,8 @@ func _process(delta: float) -> void:
 						deleted.append(finished_dir.path_join(path))
 				if not deleted.is_empty():
 					files_deleted.emit(deleted)
-					_send_discord_webhook("deleted", deleted)
+					if push_deleted:
+						_send_discord_webhook("deleted", deleted)
 			else:
 				directory.new.clear()
 				directory.modified.clear()

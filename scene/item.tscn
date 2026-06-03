@@ -57,8 +57,6 @@ layout_mode = 2
 text = "path"
 
 [node name="Lifetime_timeout" type="Timer" parent="." unique_id=494551981]
-wait_time = 300.0
-autostart = true
 
 [connection signal="pressed" from="go" to="." method="_on_go_pressed"]
 [connection signal="timeout" from="Lifetime_timeout" to="." method="_on_lifetime_timeout_timeout"]

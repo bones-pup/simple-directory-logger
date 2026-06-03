@@ -29,6 +29,9 @@ var ITEM_SETTING = preload("uid://ch3jkxera3e1f")
 @onready var start_button: Button = $VBoxContainer/Panel2/MarginContainer/HBoxContainer/start
 @onready var stop_button: Button = $VBoxContainer/Panel2/MarginContainer/HBoxContainer/stop
 
+@onready var item_timeout_line_edit: LineEdit = $VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer2/item_lifetime_container/item_timeout_LineEdit
+
+
 var exclude_extensions: Array[String] = ["import", "tmp", "uid", "godot", "cfg"]
 var exclude_folder: Array[String] = []
 
@@ -38,14 +41,31 @@ var _is_running := false
 var _editing_item: HBoxContainer = null
 var _editing_mode := ""
 
-const CONFIG_PATH = "user://user.cfg"
+const CONFIG_PATH = "user://sdl_user.cfg"
+const app_data_path = "user://"
+
+@onready var autostart_check_box: CheckBox = $VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer2/autostart_CheckBox
+@onready var dc_push_created_check_box: CheckBox = $VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer2/dc_push_created_CheckBox
+@onready var dc_push_deleted_check_box: CheckBox = $VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer2/dc_push_deleted_CheckBox
+@onready var dc_push_modified_check_box: CheckBox = $VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer2/dc_push_modified_CheckBox
+
+
+var is_autostart:bool
+var is_discord_created_push:bool
+var is_discord_deleted_push:bool
+var is_discord_modified_push:bool
+
+var item_life:int
 
 
 func _ready() -> void:
 	load_config()
 	
-	watcher.set_process(false)
-	_is_running = false
+	if is_autostart:
+		_start_watcher()
+	else :
+		watcher.set_process(false)
+		_is_running = false
 	_update_button_states()
 	_update_mention_id_visibility()
 	dc_mention_option_button.item_selected.connect(_on_mention_option_changed)
@@ -66,9 +86,15 @@ func save_config() -> void:
 
 	config.set_value("settings", "scan_dir", scan_path_line_edit.text.strip_edges())
 	config.set_value("settings", "recursive", watcher.recursive)
+	config.set_value("settings", "is_autostart", is_autostart)
+	config.set_value("settings", "is_discord_created_push", is_discord_created_push)
+	config.set_value("settings", "is_discord_deleted_push", is_discord_deleted_push)
+	config.set_value("settings", "is_discord_modified_push", is_discord_modified_push)
+	config.set_value("settings", "item_life", item_life)
 
 	config.set_value("excludes", "folders", exclude_folder)
 	config.set_value("excludes", "extensions", exclude_extensions)
+	
 
 	var err := config.save(CONFIG_PATH)
 	if err == OK:
@@ -99,6 +125,25 @@ func load_config() -> void:
 	var is_recursive = config.get_value("settings", "recursive", true)
 	recursive.button_pressed = is_recursive
 	watcher.recursive = is_recursive  # ← tambahkan ini
+	
+	is_autostart = config.get_value("settings", "is_autostart", false)
+	autostart_check_box.button_pressed = is_autostart
+	
+	is_discord_created_push = config.get_value("settings", "is_discord_created_push", true)
+	dc_push_created_check_box.button_pressed = is_discord_created_push
+	
+	is_discord_deleted_push = config.get_value("settings", "is_discord_deleted_push", true)
+	dc_push_deleted_check_box.button_pressed = is_discord_deleted_push
+	
+	is_discord_modified_push = config.get_value("settings", "is_discord_modified_push", true)
+	dc_push_modified_check_box.button_pressed = is_discord_modified_push
+	
+	watcher.push_created  = is_discord_created_push
+	watcher.push_deleted  = is_discord_deleted_push
+	watcher.push_modified = is_discord_modified_push
+	
+	item_life = config.get_value("settings", "item_life", 300.0)
+	item_timeout_line_edit.text = str(item_life)
 
 	# Excludes — fallback ke default hardcode kalau belum pernah disimpan
 	exclude_folder.assign(config.get_value("excludes", "folders", exclude_folder))
@@ -185,6 +230,7 @@ func _log_status(msg: String) -> void:
 	i.go_btn.hide()
 	i.jenis.add_theme_color_override("font_color", Color.GRAY)
 	i.finish_init_data = true
+	i.lifetime_timeout.start(item_life)
 	await get_tree().process_frame
 	var scrollbar = main_container_scroll_container.get_v_scroll_bar()
 	main_container_scroll_container.scroll_vertical = scrollbar.max_value
@@ -205,6 +251,7 @@ func _on_directory_watcher_files_created(files: PackedStringArray) -> void:
 		i.path_label.text = file
 		i.jenis.add_theme_color_override("font_color", Color.GREEN)
 		i.finish_init_data = true
+		i.lifetime_timeout.start(item_life)
 	await get_tree().process_frame
 	var scrollbar = main_container_scroll_container.get_v_scroll_bar()
 	main_container_scroll_container.scroll_vertical = scrollbar.max_value
@@ -222,6 +269,7 @@ func _on_directory_watcher_files_deleted(files: PackedStringArray) -> void:
 		i.path_label.text = file
 		i.jenis.add_theme_color_override("font_color", Color.RED)
 		i.finish_init_data = true
+		i.lifetime_timeout.start(item_life)
 	await get_tree().process_frame
 	var scrollbar = main_container_scroll_container.get_v_scroll_bar()
 	main_container_scroll_container.scroll_vertical = scrollbar.max_value
@@ -238,6 +286,7 @@ func _on_directory_watcher_files_modified(files: PackedStringArray) -> void:
 		i.path_label.text = file
 		i.jenis.add_theme_color_override("font_color", Color.ORANGE)
 		i.finish_init_data = true
+		i.lifetime_timeout.start(item_life)
 	await get_tree().process_frame
 	var scrollbar = main_container_scroll_container.get_v_scroll_bar()
 	main_container_scroll_container.scroll_vertical = scrollbar.max_value
@@ -464,4 +513,39 @@ func _on_directory_watcher_scan_completed() -> void:
 
 func _on_directory_watcher_scan_log(log_scan: String) -> void:
 	scaning_log.text = log_scan
+	pass # Replace with function body.
+
+
+func _on_autostart_check_box_pressed() -> void:
+	is_autostart = autostart_check_box.button_pressed
+	save_config()
+	pass # Replace with function body.
+
+
+func _on_dc_push_created_check_box_pressed() -> void:
+	is_discord_created_push = dc_push_created_check_box.button_pressed
+	save_config()
+	pass # Replace with function body.
+
+
+func _on_dc_push_deleted_check_box_pressed() -> void:
+	is_discord_deleted_push = dc_push_deleted_check_box.button_pressed
+	save_config()
+	pass # Replace with function body.
+
+
+func _on_dc_push_modified_check_box_pressed() -> void:
+	is_discord_modified_push = dc_push_modified_check_box.button_pressed
+	save_config()
+	pass # Replace with function body.
+
+
+func _on_item_timeout_button_pressed() -> void:
+	item_life = int(item_timeout_line_edit.text)
+	save_config()
+	pass # Replace with function body.
+
+
+func _on_user_data_folder_button_pressed() -> void:
+	OS.shell_show_in_file_manager(ProjectSettings.globalize_path(app_data_path))
 	pass # Replace with function body.

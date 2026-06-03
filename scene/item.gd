@@ -11,7 +11,7 @@ var finish_init_data:bool = false
 var flash_color: Color = Color(1.0, 0.85, 0.0, 0.5)
 var alpha_fade:float = 1.0
 
-const LOG_PATH = "user://watcher.log"
+const LOG_PATH = "user://sdl_item.log"
 const MAX_LOG_SIZE = 5 * 1024 * 1024  # 5MB per file
 const MAX_LOG_BACKUPS = 5  # watcher.log.1 sampai watcher.log.5
 

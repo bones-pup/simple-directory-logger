@@ -3,7 +3,6 @@
 [ext_resource type="Script" uid="uid://80pb3xk1m1c8" path="res://scene/control.gd" id="1_0fbet"]
 [ext_resource type="PackedScene" uid="uid://dh6r6l8blkjwp" path="res://scene/DirectoryWatcher.tscn" id="2_62e2m"]
 [ext_resource type="PackedScene" uid="uid://ch3jkxera3e1f" path="res://scene/item_setting.tscn" id="3_8g54p"]
-[ext_resource type="PackedScene" uid="uid://7lwino4j4r6u" path="res://scene/item.tscn" id="3_qtu10"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_62e2m"]
 font_size = 35
@@ -82,6 +81,21 @@ layout_mode = 2
 size_flags_horizontal = 3
 text = "restart 🔁"
 
+[node name="Panel3" type="Panel" parent="VBoxContainer" unique_id=68260566]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+
+[node name="Label3" type="Label" parent="VBoxContainer/Panel3" unique_id=1667829365]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "settings "
+label_settings = SubResource("LabelSettings_qtu10")
+horizontal_alignment = 1
+
 [node name="MarginContainer3" type="MarginContainer" parent="VBoxContainer" unique_id=657775523]
 layout_mode = 2
 theme_override_constants/margin_left = 12
@@ -95,22 +109,6 @@ theme_override_constants/separation = 60
 
 [node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/MarginContainer3/HBoxContainer" unique_id=74916397]
 layout_mode = 2
-
-[node name="Panel" type="Panel" parent="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer" unique_id=68260566]
-custom_minimum_size = Vector2(0, 40)
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="Label3" type="Label" parent="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer/Panel" unique_id=1667829365]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-text = "settings "
-label_settings = SubResource("LabelSettings_qtu10")
-horizontal_alignment = 1
 
 [node name="sc_dir" type="HBoxContainer" parent="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer" unique_id=17560482]
 layout_mode = 2
@@ -286,6 +284,45 @@ layout_mode = 2
 [node name="item_setting6" parent="VBoxContainer/MarginContainer3/HBoxContainer/setup_list/ScrollContainer/setup_list_VBoxContainer" unique_id=1984671157 instance=ExtResource("3_8g54p")]
 layout_mode = 2
 
+[node name="VBoxContainer2" type="VBoxContainer" parent="VBoxContainer/MarginContainer3/HBoxContainer" unique_id=579251858]
+layout_mode = 2
+
+[node name="autostart_CheckBox" type="CheckBox" parent="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer2" unique_id=1078432632]
+layout_mode = 2
+text = "autostart ▶️"
+
+[node name="dc_push_created_CheckBox" type="CheckBox" parent="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer2" unique_id=890051021]
+layout_mode = 2
+text = "DC_created"
+
+[node name="dc_push_deleted_CheckBox" type="CheckBox" parent="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer2" unique_id=1467209276]
+layout_mode = 2
+text = "DC_deleted"
+
+[node name="dc_push_modified_CheckBox" type="CheckBox" parent="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer2" unique_id=572888168]
+layout_mode = 2
+text = "DC_modified"
+
+[node name="item_lifetime_container" type="HBoxContainer" parent="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer2" unique_id=362518772]
+layout_mode = 2
+
+[node name="item_timeout_label" type="Label" parent="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer2/item_lifetime_container" unique_id=1039098790]
+layout_mode = 2
+text = "item timeout: "
+
+[node name="item_timeout_LineEdit" type="LineEdit" parent="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer2/item_lifetime_container" unique_id=811770009]
+layout_mode = 2
+placeholder_text = "in sec"
+expand_to_text_length = true
+
+[node name="item_timeout_Button" type="Button" parent="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer2/item_lifetime_container" unique_id=649894908]
+layout_mode = 2
+text = "set"
+
+[node name="user_data_folder_Button" type="Button" parent="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer2" unique_id=1754386350]
+layout_mode = 2
+text = "user_data 📂"
+
 [node name="scanlog_HBoxContainer" type="HBoxContainer" parent="VBoxContainer" unique_id=1938525463]
 visible = false
 layout_mode = 2
@@ -327,9 +364,6 @@ layout_mode = 2
 size_flags_horizontal = 3
 alignment = 2
 
-[node name="item" parent="VBoxContainer/Panel/MarginContainer2/ScrollContainer/main_container" unique_id=1234899421 instance=ExtResource("3_qtu10")]
-layout_mode = 2
-
 [node name="FileDialog" type="FileDialog" parent="." unique_id=942022209]
 
 [connection signal="files_created" from="DirectoryWatcher" to="." method="_on_directory_watcher_files_created"]
@@ -352,4 +386,10 @@ layout_mode = 2
 [connection signal="pressed" from="VBoxContainer/MarginContainer3/HBoxContainer/setup_list/setup_list_selectfolder_Button" to="." method="_on_setup_list_selectfolder_button_pressed"]
 [connection signal="pressed" from="VBoxContainer/MarginContainer3/HBoxContainer/setup_list/HBoxContainer/setup_list_add" to="." method="_on_setup_list_add_pressed"]
 [connection signal="pressed" from="VBoxContainer/MarginContainer3/HBoxContainer/setup_list/HBoxContainer/setup_list_save" to="." method="_on_setup_list_save_pressed"]
+[connection signal="pressed" from="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer2/autostart_CheckBox" to="." method="_on_autostart_check_box_pressed"]
+[connection signal="pressed" from="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer2/dc_push_created_CheckBox" to="." method="_on_dc_push_created_check_box_pressed"]
+[connection signal="pressed" from="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer2/dc_push_deleted_CheckBox" to="." method="_on_dc_push_deleted_check_box_pressed"]
+[connection signal="pressed" from="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer2/dc_push_modified_CheckBox" to="." method="_on_dc_push_modified_check_box_pressed"]
+[connection signal="pressed" from="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer2/item_lifetime_container/item_timeout_Button" to="." method="_on_item_timeout_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer2/user_data_folder_Button" to="." method="_on_user_data_folder_button_pressed"]
 [connection signal="dir_selected" from="FileDialog" to="." method="_on_file_dialog_dir_selected"]
