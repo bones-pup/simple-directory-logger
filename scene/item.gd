@@ -41,11 +41,25 @@ func _ready() -> void:
 	tween.tween_callback(queue_redraw) # Memastikan redraw terakhir bersih
 	
 
-func go(target_path:String):
-	if FileAccess.file_exists(target_path):
+func go(target_path: String) -> void:
+	print("raw path: ", target_path)
+	print("begins //: ", target_path.begins_with("//"))
+	print("begins \\\\: ", target_path.begins_with("\\\\"))
+	
+	var is_network = target_path.begins_with("//") or target_path.begins_with("\\\\")
+	print("is_network: ", is_network)
+	
+	if is_network:
+		var win_path = target_path.replace("/", "\\")
+		var folder = win_path.get_base_dir()
+		print("folder: ", folder)
+		var err = OS.shell_open(folder)
+		if err != OK:
+			OS.alert("Gagal membuka lokasi file:\n%s" % folder)
+	elif FileAccess.file_exists(target_path):
 		OS.shell_show_in_file_manager(target_path)
 	else:
-		OS.alert("path file telah dipindah / dihapus")
+		OS.alert("File tidak ditemukan atau telah dipindah / dihapus:\n%s" % target_path)
 
 func _format_time(seconds: float) -> String:
 	var s := int(seconds)

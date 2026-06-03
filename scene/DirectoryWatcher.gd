@@ -33,6 +33,7 @@ signal webhook_success(event: String, files: PackedStringArray)
 signal webhook_failed(event: String, files: PackedStringArray, error_code: int, error_message: String)
 signal scan_completed()
 signal scan_log(log:String)
+signal scan_fail(log:String)
 
 var _directory: DirAccess = null
 var _directory_list: Dictionary
@@ -65,7 +66,7 @@ func _add_directory_internal(directory: String) -> void:
 		return
 	var dir := DirAccess.open(directory)
 	if dir == null:
-		push_error("DirectoryWatcher: failed to open: %s" % directory)
+		push_warning("DirectoryWatcher: failed to open: %s" % directory)
 		return
 	dir.include_hidden = true
 	dir.list_dir_begin()
@@ -250,7 +251,7 @@ func _process(delta: float) -> void:
 			_current_directory_name = _directory_cache[_current_directory_index]
 			_directory = DirAccess.open(_current_directory_name)
 			if _directory == null:
-				push_error("DirectoryWatcher: failed to open during scan: %s" % _current_directory_name)
+				scan_fail.emit("failed to open during scan: %s %s" % [_current_directory_name, "trying again.."])
 				_current_directory_index += 1
 				_current_directory_name = ""
 				if _current_directory_index >= _directory_cache.size():
@@ -316,6 +317,13 @@ func _process(delta: float) -> void:
 				break
 		else:
 			if _directory.current_is_dir():
+				if recursive:
+					var full_dir := _current_directory_name.path_join(file)
+					if file != "." and file != ".." and not _is_excluded(full_dir):
+						# Kalau folder baru dan belum terdaftar, register
+						if full_dir not in _directory_list:
+							_add_directory_internal(full_dir)
+							_directory_cache.assign(_directory_list.keys())
 				continue
 
 			var full_file := _current_directory_name.path_join(file)

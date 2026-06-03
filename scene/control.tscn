@@ -74,7 +74,7 @@ text = "start ▶️"
 [node name="stop" type="Button" parent="VBoxContainer/Panel2/MarginContainer/HBoxContainer" unique_id=1001047232]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "stop 🛑"
+text = "pause ⏸️"
 
 [node name="restart" type="Button" parent="VBoxContainer/Panel2/MarginContainer/HBoxContainer" unique_id=974152532]
 layout_mode = 2
@@ -370,6 +370,7 @@ alignment = 2
 [connection signal="files_deleted" from="DirectoryWatcher" to="." method="_on_directory_watcher_files_deleted"]
 [connection signal="files_modified" from="DirectoryWatcher" to="." method="_on_directory_watcher_files_modified"]
 [connection signal="scan_completed" from="DirectoryWatcher" to="." method="_on_directory_watcher_scan_completed"]
+[connection signal="scan_fail" from="DirectoryWatcher" to="." method="_on_directory_watcher_scan_fail"]
 [connection signal="scan_log" from="DirectoryWatcher" to="." method="_on_directory_watcher_scan_log"]
 [connection signal="pressed" from="VBoxContainer/Panel2/MarginContainer/HBoxContainer/help" to="." method="_on_help_pressed"]
 [connection signal="pressed" from="VBoxContainer/Panel2/MarginContainer/HBoxContainer/start" to="." method="_on_start_pressed"]

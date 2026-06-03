@@ -37,6 +37,7 @@ var exclude_folder: Array[String] = []
 
 var dc_webhook_url: String
 var _is_running := false
+var is_finish_scan:bool = false
 
 var _editing_item: HBoxContainer = null
 var _editing_mode := ""
@@ -187,7 +188,8 @@ func _start_watcher() -> void:
 	_is_running = true
 	_update_button_states()
 	_log_status("Watcher started — scanning: %s" % scan_dir)
-	scanlog_h_box_container.show()
+	if not is_finish_scan:
+		scanlog_h_box_container.show()
 
 
 func _stop_watcher() -> void:
@@ -200,16 +202,7 @@ func _stop_watcher() -> void:
 
 
 func _restart_watcher() -> void:
-	_stop_watcher()
-	watcher._directory_list.clear()
-	watcher._directory_cache.clear()
-	watcher._current_directory_index = 0
-	watcher._current_directory_name = ""
-	watcher._current_delay = watcher.scan_delay
-	watcher._remaining_steps = watcher.scan_step
-	await get_tree().process_frame
-	_start_watcher()
-	_log_status("Watcher restarted.")
+	get_tree().reload_current_scene()
 
 
 func _update_button_states() -> void:
@@ -513,6 +506,7 @@ func _on_directory_watcher_scan_completed() -> void:
 
 func _on_directory_watcher_scan_log(log_scan: String) -> void:
 	scaning_log.text = log_scan
+	is_finish_scan = true
 	pass # Replace with function body.
 
 
@@ -548,4 +542,9 @@ func _on_item_timeout_button_pressed() -> void:
 
 func _on_user_data_folder_button_pressed() -> void:
 	OS.shell_show_in_file_manager(ProjectSettings.globalize_path(app_data_path))
+	pass # Replace with function body.
+
+
+func _on_directory_watcher_scan_fail(log: String) -> void:
+	_log_status(log)
 	pass # Replace with function body.
