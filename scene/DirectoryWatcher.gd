@@ -131,39 +131,67 @@ func _get_mention_string() -> String:
 func _build_discord_embed(event: String, files: PackedStringArray) -> Dictionary:
 	var color: int
 	var emoji: String
+	var verb: String
 	match event:
 		"created":
 			color = 0x57F287
 			emoji = "📁"
+			verb = "Created"
 		"modified":
 			color = 0xFEE75C
-			emoji = "📝"
+			emoji = "✏️"
+			verb = "Modified"
 		"deleted":
 			color = 0xED4245
 			emoji = "🗑️"
+			verb = "Deleted"
 		_:
 			color = 0x5865F2
 			emoji = "📄"
+			verb = event.capitalize()
 
-	var file_list := ""
-	for f in files:
-		file_list += "• `%s`\n" % f.get_file()
+	# Ambil directory dari file pertama
+	var base_dir := files[0].get_base_dir() if files.size() > 0 else "Unknown"
+
+	# Build file list dengan code block
+	var file_lines := ""
+	for i in files.size():
+		var f := files[i]
+		file_lines += "**nama** : `%s`\n" % f.get_file()
+		file_lines += "**path**  : `%s`\n" % f.get_base_dir()
+		if i < files.size() - 1:
+			file_lines += "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯\n"
+
+	var dt := Time.get_datetime_dict_from_system()
+	var timestamp := "%04d-%02d-%02d %02d:%02d:%02d" % [
+		dt["year"], dt["month"], dt["day"],
+		dt["hour"], dt["minute"], dt["second"]
+	]
 
 	var payload: Dictionary = {
 		"embeds": [{
-			"title": "%s Files %s" % [emoji, event.capitalize()],
-			"description": file_list,
-			"color": color,
-			"footer": {
-				"text": "DirectoryWatcher • %s" % Time.get_datetime_string_from_system()
+			"author": {
+				"name": "DirectoryWatcher",
+				"icon_url": "https://emoji.discadia.com/emojis/28364ee3-15ce-4337-8588-845729d05d9e.GIF"
 			},
+			"title": "%s  %s" % [emoji, verb],
+			"description": file_lines,
+			"color": color,
 			"fields": [
 				{
-					"name": "Total",
-					"value": str(files.size()) + " file(s)",
+					"name": "📊 Total",
+					"value": "**%d** file(s)" % files.size(),
+					"inline": true
+				},
+				{
+					"name": "🕐 Time",
+					"value": "`%s`" % timestamp,
 					"inline": true
 				}
-			]
+			],
+			"footer": {
+				"text": "DirectoryWatcher  •  File Monitor"
+			}
 		}]
 	}
 
@@ -250,10 +278,24 @@ func _process(delta: float) -> void:
 		if _current_directory_name.is_empty():
 			_current_directory_name = _directory_cache[_current_directory_index]
 			_directory = DirAccess.open(_current_directory_name)
+			
 			if _directory == null:
+				var watched: WatchedDirectory = _directory_list[_current_directory_name]
+				if not watched.previous.is_empty():
+					var deleted: PackedStringArray
+					for path in watched.previous:
+						deleted.append(_current_directory_name.path_join(path))
+					files_deleted.emit(deleted)
+					watched.previous.clear()
+					if push_deleted:
+						_send_discord_webhook("deleted", deleted)
+				
 				scan_fail.emit("failed to open during scan: %s %s" % [_current_directory_name, "trying again.."])
-				_current_directory_index += 1
-				_current_directory_name = ""
+				_to_delete.append(_current_directory_name)
+				_directory_list.erase(_current_directory_name)
+				_directory_cache.assign(_directory_list.keys())
+				#_current_directory_index += 1
+				_current_directory_name = "" #ini
 				if _current_directory_index >= _directory_cache.size():
 					_current_directory_index = 0
 					break

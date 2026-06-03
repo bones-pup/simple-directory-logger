@@ -548,3 +548,8 @@ func _on_user_data_folder_button_pressed() -> void:
 func _on_directory_watcher_scan_fail(log: String) -> void:
 	_log_status(log)
 	pass # Replace with function body.
+
+
+func _on_directory_watcher_webhook_success(event: String, files: PackedStringArray) -> void:
+	print(event)
+	pass # Replace with function body.
