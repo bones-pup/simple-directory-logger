@@ -43,7 +43,6 @@ const CONFIG_PATH = "user://user.cfg"
 
 func _ready() -> void:
 	load_config()
-	print(watcher.recursive)
 	
 	watcher.set_process(false)
 	_is_running = false
@@ -435,7 +434,7 @@ func _on_dc_mention_id_button_pressed() -> void:
 # ─────────────────────────────────────────────
 
 func _on_help_pressed() -> void:
-	OS.shell_open("https://github.com/")
+	OS.shell_open("https://github.com/bones-pup/simple-directory-logger")
 
 
 # ─────────────────────────────────────────────
