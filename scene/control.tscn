@@ -46,10 +46,10 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 10
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
 
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/Panel2/MarginContainer" unique_id=1977484118]
 layout_mode = 2
@@ -96,14 +96,25 @@ theme_override_constants/separation = 60
 [node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/MarginContainer3/HBoxContainer" unique_id=74916397]
 layout_mode = 2
 
-[node name="Label3" type="Label" parent="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer" unique_id=1667829365]
+[node name="Panel" type="Panel" parent="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer" unique_id=68260566]
+custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label3" type="Label" parent="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer/Panel" unique_id=1667829365]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 text = "settings "
 label_settings = SubResource("LabelSettings_qtu10")
 horizontal_alignment = 1
 
 [node name="sc_dir" type="HBoxContainer" parent="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer" unique_id=17560482]
 layout_mode = 2
+size_flags_vertical = 3
 
 [node name="label" type="Label" parent="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer/sc_dir" unique_id=545270490]
 layout_mode = 2
@@ -125,10 +136,12 @@ text = "set"
 
 [node name="recursive" type="CheckBox" parent="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer" unique_id=785225039]
 layout_mode = 2
+size_flags_vertical = 3
 text = "recursive index"
 
 [node name="e_fol" type="HBoxContainer" parent="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer" unique_id=1707544800]
 layout_mode = 2
+size_flags_vertical = 3
 
 [node name="label" type="Label" parent="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer/e_fol" unique_id=111539817]
 layout_mode = 2
@@ -140,6 +153,7 @@ text = "edit"
 
 [node name="e_ex" type="HBoxContainer" parent="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer" unique_id=170514005]
 layout_mode = 2
+size_flags_vertical = 3
 
 [node name="label" type="Label" parent="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer/e_ex" unique_id=526088077]
 layout_mode = 2
@@ -151,6 +165,7 @@ text = "edit"
 
 [node name="dc_webhook" type="HBoxContainer" parent="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer" unique_id=877950294]
 layout_mode = 2
+size_flags_vertical = 3
 
 [node name="label" type="Label" parent="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer/dc_webhook" unique_id=1873461161]
 layout_mode = 2
@@ -167,6 +182,7 @@ text = "set"
 
 [node name="dc_mention" type="HBoxContainer" parent="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer" unique_id=800903706]
 layout_mode = 2
+size_flags_vertical = 3
 
 [node name="label" type="Label" parent="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer/dc_mention" unique_id=227276717]
 layout_mode = 2
@@ -194,6 +210,7 @@ text = "set"
 [node name="dc_mention_id" type="HBoxContainer" parent="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer" unique_id=237024062]
 visible = false
 layout_mode = 2
+size_flags_vertical = 3
 
 [node name="label" type="Label" parent="VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer/dc_mention_id" unique_id=1247344390]
 layout_mode = 2
