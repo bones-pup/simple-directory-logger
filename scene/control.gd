@@ -22,6 +22,9 @@ var ITEM_SETTING = preload("uid://ch3jkxera3e1f")
 @onready var setup_list_v_box_container: VBoxContainer = $VBoxContainer/MarginContainer3/HBoxContainer/setup_list/ScrollContainer/setup_list_VBoxContainer
 @onready var setup_list_selectfolder_button: Button = $VBoxContainer/MarginContainer3/HBoxContainer/setup_list/setup_list_selectfolder_Button
 
+@onready var setting_option: MarginContainer = $VBoxContainer/MarginContainer3
+
+
 @onready var dc_webhook_line_edit: LineEdit = $VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer/dc_webhook/dc_webhook_LineEdit
 @onready var dc_mention_option_button: OptionButton = $VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer/dc_mention/dc_mention_OptionButton
 @onready var dc_mention_id_line_edit: LineEdit = $VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer/dc_mention_id/dc_mention_id_LineEdit
@@ -32,8 +35,8 @@ var ITEM_SETTING = preload("uid://ch3jkxera3e1f")
 @onready var item_timeout_line_edit: LineEdit = $VBoxContainer/MarginContainer3/HBoxContainer/VBoxContainer2/item_lifetime_container/item_timeout_LineEdit
 
 
-var exclude_extensions: Array[String] = ["import", "tmp", "uid", "godot", "cfg"]
-var exclude_folder: Array[String] = []
+var exclude_extensions: Array[String] = ["import", "tmp", "uid", "godot","ini", "cfg","db","swf","mp4","png","thumb","jpg","dat"]
+var exclude_folder: Array[String] = [".tmp.drivedownload",".tmp.driveupload"]
 
 var dc_webhook_url: String
 var _is_running := false
@@ -143,7 +146,7 @@ func load_config() -> void:
 	watcher.push_deleted  = is_discord_deleted_push
 	watcher.push_modified = is_discord_modified_push
 	
-	item_life = config.get_value("settings", "item_life", 300.0)
+	item_life = config.get_value("settings", "item_life", 300)
 	item_timeout_line_edit.text = str(item_life)
 
 	# Excludes — fallback ke default hardcode kalau belum pernah disimpan
@@ -290,7 +293,9 @@ func _on_directory_watcher_files_modified(files: PackedStringArray) -> void:
 # ─────────────────────────────────────────────
 
 func _on_start_pressed() -> void:
+	setting_option.hide()
 	_start_watcher()
+	
 
 
 func _on_stop_pressed() -> void:
@@ -552,4 +557,12 @@ func _on_directory_watcher_scan_fail(log: String) -> void:
 
 func _on_directory_watcher_webhook_success(event: String, files: PackedStringArray) -> void:
 	print(event)
+	pass # Replace with function body.
+
+
+func _on_label_3_pressed() -> void:
+	if not setting_option.visible:
+		setting_option.show()
+	else:
+		setting_option.hide()
 	pass # Replace with function body.

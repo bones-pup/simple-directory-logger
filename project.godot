@@ -11,9 +11,10 @@ config_version=5
 [application]
 
 config/name="simple directory logger"
-config/version="1.0.0"
+config/version="1.5.0"
 run/main_scene="uid://7tv25hxnvkv"
 config/features=PackedStringArray("4.6", "GL Compatibility")
+run/low_processor_mode=true
 config/icon="uid://ds2momfmqorjd"
 
 [editor_plugins]
